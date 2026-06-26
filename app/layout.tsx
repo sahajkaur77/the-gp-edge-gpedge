@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/shared/Header";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Inter, Lora } from "next/font/google";
+import ChatBot from "@/components/chatbot/ChatBot";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -60,6 +61,7 @@ export default function RootLayout({
           <ThemeProvider>
             <Header />
             {children}
+            <ChatBot />
           </ThemeProvider>
         </body>
       </html>

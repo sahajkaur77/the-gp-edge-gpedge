@@ -4,6 +4,7 @@ import Hero from "@/components/landing/Hero";
 import BentoGrid from "@/components/landing/BentoGrid";
 import IntelligenceEngine from "@/components/landing/IntelligenceEngine";
 import Footer from "@/components/shared/Footer";
+import ChatBot from "@/components/chatbot/ChatBot";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -21,6 +22,7 @@ export default async function Home() {
     return (
       <DashboardShell className="" bgClassName="bg-slate-50 dark:bg-[#0F1115]">
         {content}
+        <ChatBot />
       </DashboardShell>
     );
   }
@@ -28,6 +30,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-[#0F1115]">
       {content}
+      <ChatBot />
     </main>
   );
 }
