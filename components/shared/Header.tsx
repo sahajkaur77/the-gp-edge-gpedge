@@ -3,19 +3,19 @@
 import { memo, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignOutButton, useAuth } from "@clerk/nextjs";
+import { useSession, signOut } from "next-auth/react";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 
-// Custom reactive authentication state wrappers since SignedIn/SignedOut are removed in this Clerk version
+// Custom reactive authentication state wrappers using NextAuth session
 function SignedIn({ children }: { children: React.ReactNode }) {
-  const { isSignedIn } = useAuth();
-  return isSignedIn ? <>{children}</> : null;
+  const { status } = useSession();
+  return status === "authenticated" ? <>{children}</> : null;
 }
 
 function SignedOut({ children }: { children: React.ReactNode }) {
-  const { isSignedIn } = useAuth();
-  return !isSignedIn ? <>{children}</> : null;
+  const { status } = useSession();
+  return status === "unauthenticated" ? <>{children}</> : null;
 }
 
 interface HeaderProps {
@@ -24,7 +24,8 @@ interface HeaderProps {
 
 const Header = memo(function Header({ variant = "fixed" }: HeaderProps) {
   const pathname = usePathname();
-  const { isSignedIn } = useAuth();
+  const { status } = useSession();
+  const isSignedIn = status === "authenticated";
   const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -124,20 +125,21 @@ const Header = memo(function Header({ variant = "fixed" }: HeaderProps) {
         {/* CTA Buttons */}
         <div className="flex items-center gap-4">
           <SignedOut>
-            <Link href="/sign-in" className="text-sm font-medium text-slate-600 dark:text-[#A8B1BD] hover:text-slate-900 dark:hover:text-[#F5F7FA] transition-colors">
+            <Link href="/login" className="text-sm font-medium text-slate-600 dark:text-[#A8B1BD] hover:text-slate-900 dark:hover:text-[#F5F7FA] transition-colors">
               Log in
             </Link>
-            <Link href="/sign-up" className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
+            <Link href="/register" className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
               Sign up
             </Link>
           </SignedOut>
 
           <SignedIn>
-            <SignOutButton>
-              <button className="text-sm font-medium text-slate-600 dark:text-[#A8B1BD] hover:text-slate-900 dark:hover:text-[#F5F7FA] transition-colors">
-                Log out
-              </button>
-            </SignOutButton>
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="text-sm font-medium text-slate-600 dark:text-[#A8B1BD] hover:text-slate-900 dark:hover:text-[#F5F7FA] transition-colors"
+            >
+              Log out
+            </button>
             <Link
               href="/dashboard"
               className={`btn-dashboard-new ${pathname === '/' ? 'interactive' : ''}`}

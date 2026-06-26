@@ -38,7 +38,7 @@ import {
   FileEdit,
 } from "lucide-react";
 import { user as localUser } from "./data";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { useSidebar, SIDEBAR_TOP_PX } from "@/contexts/SidebarContext";
 
 // ─── Internal layout constants ────────────────────────────────────────────────
@@ -103,7 +103,8 @@ function RailBtn({ icon, title }: { icon: React.ReactNode; title: string }) {
 export default function Sidebar() {
   const pathname = usePathname();
   const { isExpanded, ready, toggle, setHovered } = useSidebar();
-  const { user } = useUser();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const leaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onEnter = useCallback(() => {
@@ -242,10 +243,10 @@ export default function Sidebar() {
               marginBottom: 8,
               position: "relative",
             }}>
-              {user?.imageUrl ? (
+              {user?.image ? (
                 <Image
-                  src={user.imageUrl}
-                  alt={user.fullName || "User Avatar"}
+                  src={user.image}
+                  alt={user.name || "User Avatar"}
                   fill
                   sizes="38px"
                   style={{ objectFit: "cover" }}
@@ -403,10 +404,10 @@ export default function Sidebar() {
                     background: "#DCEEED", zIndex: 1,
                     position: "relative",
                   }}>
-                    {user?.imageUrl ? (
+                    {user?.image ? (
                       <Image
-                        src={user.imageUrl}
-                        alt={user.fullName || "User Avatar"}
+                        src={user.image}
+                        alt={user.name || "User Avatar"}
                         fill
                         sizes="84px"
                         style={{ objectFit: "cover" }}
@@ -416,7 +417,7 @@ export default function Sidebar() {
                     )}
                   </div>
                   <p className="font-sans text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100" style={{ margin: "9px 0 2px" }}>
-                    {user?.fullName || "User"}
+                    {user?.name || "User"}
                   </p>
                   <p className="font-sans text-sm font-medium text-slate-600 dark:text-slate-400" style={{ margin: 0 }}>
                     RACGP Candidate · PGY3

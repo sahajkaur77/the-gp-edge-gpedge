@@ -3,7 +3,7 @@
 import { motion, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useAuth } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 
 // Scroll-aware logo — only visible at top of the hero section
 function HeroCornerLogo() {
@@ -171,7 +171,8 @@ function StatCard({ stat, index }: { stat: StatConfig; index: number }) {
 }
 
 export default function Hero() {
-  const { isSignedIn } = useAuth();
+  const { status } = useSession();
+  const isSignedIn = status === "authenticated";
 
   return (
     <section className="relative flex items-center overflow-hidden min-h-screen pb-8 lg:pb-10">
@@ -355,7 +356,7 @@ export default function Hero() {
                 }
               `}</style>
               <a
-                href="/signup"
+                href="/register"
                 className="btn-start-free-new"
               >
                 Start for free

@@ -1,4 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import Hero from "@/components/landing/Hero";
 import BentoGrid from "@/components/landing/BentoGrid";
@@ -7,7 +8,8 @@ import Footer from "@/components/shared/Footer";
 import ChatBot from "@/components/chatbot/ChatBot";
 
 export default async function Home() {
-  const { userId } = await auth();
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
 
   const content = (
     <>

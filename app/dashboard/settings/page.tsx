@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import {
   User,
   Shield,
@@ -153,7 +153,11 @@ function SaveButton({ id, label = "Save Changes" }: { id: string; label?: string
 // SETTINGS PAGE
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function SettingsPage() {
-  const { user } = useUser();
+  const { data: session } = useSession();
+  const user = session?.user;
+  const nameParts = user?.name?.split(" ") || [];
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarHovered, setAvatarHovered] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -207,7 +211,7 @@ export default function SettingsPage() {
                     role="button" aria-label="Update profile photo"
                   >
                     <Image
-                      src={user?.imageUrl || "/assets/logo.png"}
+                      src={user?.image || "/assets/logo.png"}
                       alt="Profile Photo"
                       fill
                       sizes="128px"
@@ -234,10 +238,10 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div><FieldLabel htmlFor="first-name">First Name</FieldLabel><TextInput id="first-name" defaultValue={user?.firstName || ''} /></div>
-                <div><FieldLabel htmlFor="last-name">Last Name</FieldLabel><TextInput id="last-name" defaultValue={user?.lastName || ''} /></div>
+                <div><FieldLabel htmlFor="first-name">First Name</FieldLabel><TextInput id="first-name" defaultValue={firstName} /></div>
+                <div><FieldLabel htmlFor="last-name">Last Name</FieldLabel><TextInput id="last-name" defaultValue={lastName} /></div>
               </div>
-              <div><FieldLabel htmlFor="email">Email</FieldLabel><TextInput id="email" type="email" defaultValue={user?.primaryEmailAddress?.emailAddress || ''} /></div>
+              <div><FieldLabel htmlFor="email">Email</FieldLabel><TextInput id="email" type="email" defaultValue={user?.email || ''} /></div>
               <div>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <div className="flex gap-2">

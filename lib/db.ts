@@ -26,3 +26,4 @@ if (typeof window === "undefined") {
 }
 
 export const db = prisma;
+export default prisma;

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/shared/Header";
-import { ThemeProvider } from "@/contexts/ThemeContext";
+import { Providers } from "@/components/Providers";
 import { Inter, Lora } from "next/font/google";
 import ChatBot from "@/components/chatbot/ChatBot";
 
@@ -55,16 +54,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
-        <body className={`${inter.variable} ${lora.variable} font-sans antialiased bg-slate-50 dark:bg-[#0F1115] text-slate-800 dark:text-[#F5F7FA] min-h-screen transition-colors duration-300`}>
-          <ThemeProvider>
-            <Header />
-            {children}
-            <ChatBot />
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <body className={`${inter.variable} ${lora.variable} font-sans antialiased bg-slate-50 dark:bg-[#0F1115] text-slate-800 dark:text-[#F5F7FA] min-h-screen transition-colors duration-300`}>
+        <Providers>
+          <Header />
+          {children}
+          <ChatBot />
+        </Providers>
+      </body>
+    </html>
   );
 }

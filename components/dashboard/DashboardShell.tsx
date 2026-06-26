@@ -4,7 +4,7 @@ import { memo } from "react";
 import Header from "@/components/shared/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import PageTransition from "@/components/ui/PageTransition";
-import { useAuth } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import {
   SidebarProvider,
   useSidebar,
@@ -13,10 +13,10 @@ import {
   MARGIN_TRANSITION,
 } from "@/contexts/SidebarContext";
 
-// Local SignedIn wrapper to avoid Clerk package ESM export issues in this Next.js version
+// Local SignedIn wrapper using NextAuth session
 function SignedIn({ children }: { children: React.ReactNode }) {
-  const { isSignedIn } = useAuth();
-  return isSignedIn ? <>{children}</> : null;
+  const { status } = useSession();
+  return status === "authenticated" ? <>{children}</> : null;
 }
 
 /**
@@ -36,7 +36,8 @@ const DashboardInner = memo(function DashboardInner({
   hideSidebar?: boolean;
 }) {
   const { isExpanded, ready } = useSidebar();
-  const { isSignedIn } = useAuth();
+  const { status } = useSession();
+  const isSignedIn = status === "authenticated";
 
   const showSidebar = !hideSidebar && isSignedIn;
 

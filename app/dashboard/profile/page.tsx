@@ -7,7 +7,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { user as localUser, badges, stats, examPaths } from "@/components/dashboard/data";
 import Avatar from "@/components/ui/Avatar";
 import FadeIn from "@/components/ui/FadeIn";
@@ -32,7 +33,8 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 // PROFILE PAGE
 // ═══════════════════════════════════════════════════════════════════════════════
 export default async function ProfilePage() {
-  const user = await currentUser();
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
 
   return (
     <div className="flex flex-col gap-6 pb-6">
@@ -72,19 +74,19 @@ export default async function ProfilePage() {
                   {/* Overlapping Avatar with white border */}
                   <div className="-mt-12 relative z-10 mx-auto w-24 h-24 rounded-full ring-4 ring-white dark:ring-slate-900 bg-white dark:bg-slate-950 overflow-hidden shadow-sm flex-shrink-0">
                     <Image
-                      src={user?.imageUrl || "/assets/logo.png"}
-                      alt={user?.fullName || "User Avatar"}
+                      src={user?.image || "/assets/logo.png"}
+                      alt={user?.name || "User Avatar"}
                       fill
                       sizes="96px"
                       className="object-cover"
                     />
                   </div>
-                  <h2 className="font-sans text-lg md:text-xl font-semibold leading-snug text-slate-900 dark:text-slate-50 mt-2">
-                    {user?.fullName || "GP Candidate"}
+                  <h2 className="font-sans text-lg md:text-xl font-semibold leading-snug text-slate-900 dark:text-slate-55 mt-2">
+                    {user?.name || "GP Candidate"}
                   </h2>
-                  {user?.primaryEmailAddress?.emailAddress && (
+                  {user?.email && (
                     <p className="font-sans text-xs text-slate-400 mt-1">
-                      {user.primaryEmailAddress.emailAddress}
+                      {user.email}
                     </p>
                   )}
                   <div className="flex flex-col gap-1 mt-2.5 font-sans text-xs text-slate-500 dark:text-slate-400">
