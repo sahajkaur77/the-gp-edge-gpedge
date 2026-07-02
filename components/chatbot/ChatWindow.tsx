@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Bot, Menu, Plus, X } from "lucide-react";
+import { Bot, ChevronDown, Menu, Plus, Sparkles, X } from "lucide-react";
 import ChatInput from "./ChatInput";
 import ChatMessage, { Message } from "./ChatMessage";
 import ChatSidebar from "./ChatSidebar";
@@ -40,16 +40,40 @@ export default function ChatWindow({
   onSelectConversation,
   onDeleteConversation,
 }: ChatWindowProps) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollAnchorRef = useRef<HTMLDivElement | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    const container = messageContainerRef.current;
+    if (!container) return;
+
+    container.scrollTo({ top: container.scrollHeight, behavior });
+  };
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const container = messageContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 140;
+      setShowScrollButton(!nearBottom);
+    };
+
+    handleScroll();
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [messages, isTyping]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => scrollToBottom("smooth"), 80);
+    return () => window.clearTimeout(timer);
   }, [messages, isTyping]);
 
   return (
-    <div className="animate-[fadeIn_0.3s_ease-out] flex h-[100dvh] w-[100vw] flex-col overflow-hidden rounded-none border-0 bg-white/95 shadow-none backdrop-blur-sm sm:h-[650px] sm:w-[860px] sm:flex-row sm:rounded-[24px] sm:border sm:border-gray-200 sm:shadow-2xl">
-      <div className="hidden sm:block">
+    <div className="animate-[fadeIn_0.3s_ease-out] flex h-full w-full min-h-[100dvh] flex-col overflow-hidden rounded-none border-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.16),_transparent_28%),linear-gradient(135deg,_#f8fffe_0%,_#ffffff_55%,_#f0fdfa_100%)] shadow-none backdrop-blur-sm sm:min-h-0 sm:flex-row sm:rounded-[28px] sm:border sm:border-white/70 sm:shadow-[0_24px_80px_rgba(15,23,42,0.14)]">
+      <div className="hidden h-full sm:block">
         <ChatSidebar
           conversations={conversations}
           onNewChat={onNewChat}
@@ -60,7 +84,7 @@ export default function ChatWindow({
       </div>
 
       {sidebarOpen ? (
-        <div className="absolute inset-y-0 left-0 z-20 w-[80vw] max-w-[280px] bg-white shadow-2xl sm:hidden">
+        <div className="absolute inset-y-0 left-0 z-20 w-[82vw] max-w-[290px] bg-white/95 shadow-2xl backdrop-blur-xl sm:hidden">
           <ChatSidebar
             conversations={conversations}
             onNewChat={onNewChat}
@@ -71,24 +95,24 @@ export default function ChatWindow({
         </div>
       ) : null}
 
-      <div className="flex flex-1 flex-col">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/20 bg-gradient-to-r from-[#0d9488] via-[#14b8a6] to-[#2dd4bf] px-4 py-3 text-white shadow-lg shadow-[#0d9488]/20 backdrop-blur">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex-shrink-0 sticky top-0 z-20 flex items-center justify-between border-b border-white/70 bg-white/70 px-4 py-3 text-slate-900 shadow-[0_10px_25px_rgba(15,23,42,0.05)] backdrop-blur-xl sm:px-5">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen((prev) => !prev)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white/90 transition-all duration-300 hover:scale-105 hover:bg-white/15 sm:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 bg-white/80 text-slate-600 transition-all duration-300 hover:scale-105 hover:bg-emerald-50 hover:text-emerald-600 sm:hidden"
             >
               <Menu size={16} />
             </button>
 
-            <div className="flex h-10 w-10 animate-[float_3s_ease-in-out_infinite] items-center justify-center rounded-full border border-white/30 bg-white/20 text-white shadow-sm">
-              <Bot size={18} />
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-lg shadow-emerald-500/20">
+              <Bot size={17} />
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-white">{activeConversationTitle}</h3>
-              <div className="flex items-center gap-1.5 text-xs text-white/80">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" />
+            <div className="min-w-0">
+              <h3 className="truncate text-sm font-semibold text-slate-900">{activeConversationTitle}</h3>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                 Online
               </div>
             </div>
@@ -98,7 +122,7 @@ export default function ChatWindow({
             <button
               type="button"
               onClick={onNewChat}
-              className="hidden rounded-full border border-white/30 bg-white/10 px-3 py-2 text-sm text-white transition-all duration-300 hover:scale-105 hover:bg-white/20 sm:flex"
+              className="hidden rounded-full border border-slate-200/80 bg-white/90 px-3 py-2 text-sm font-medium text-slate-700 transition-all duration-300 hover:scale-105 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 sm:flex"
             >
               <span className="flex items-center gap-2">
                 <Plus size={14} />
@@ -108,14 +132,14 @@ export default function ChatWindow({
             <button
               type="button"
               onClick={onClear}
-              className="rounded-full px-2.5 py-1.5 text-sm text-white/90 transition-all duration-300 hover:scale-105 hover:bg-white/15"
+              className="rounded-full px-2.5 py-1.5 text-sm font-medium text-slate-600 transition-all duration-300 hover:scale-105 hover:bg-slate-100"
             >
               Reset
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-white/90 transition-all duration-300 hover:scale-105 hover:bg-white/15"
+              className="rounded-full p-2 text-slate-600 transition-all duration-300 hover:scale-105 hover:bg-slate-100"
               aria-label="Close chat"
             >
               <X size={18} />
@@ -123,7 +147,10 @@ export default function ChatWindow({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white px-3 py-3 sm:px-4">
+        <div
+          ref={messageContainerRef}
+          className="chat-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-gradient-to-b from-slate-50/90 via-white to-slate-50/90 px-3 py-3 sm:px-5 sm:py-4"
+        >
           {!hasStarted ? (
             <div className="animate-[fadeIn_0.3s_ease-out] h-full">
               <WelcomeScreen onStartConversation={onStartConversation} onSelectSuggestion={onSelectSuggestion} />
@@ -137,12 +164,15 @@ export default function ChatWindow({
               ))}
 
               {isTyping ? (
-                <div className="mb-3 flex justify-start">
-                  <div className="rounded-2xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#0d9488]" />
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#0d9488]" style={{ animationDelay: "0.15s" }} />
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#0d9488]" style={{ animationDelay: "0.3s" }} />
+                <div className="mb-4 flex justify-start">
+                  <div className="max-w-[85%] rounded-[24px] border border-slate-200/80 bg-white/90 px-4 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-emerald-500" />
+                        <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-emerald-500" style={{ animationDelay: "0.15s" }} />
+                        <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-emerald-500" style={{ animationDelay: "0.3s" }} />
+                      </div>
+                      <span className="text-sm font-medium text-slate-500">Thinking…</span>
                     </div>
                   </div>
                 </div>
@@ -150,22 +180,21 @@ export default function ChatWindow({
             </>
           )}
 
-          {isTyping ? (
-            <div className="mb-3 flex justify-start">
-              <div className="rounded-2xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-[#0d9488]" />
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-[#0d9488]" style={{ animationDelay: "0.15s" }} />
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-[#0d9488]" style={{ animationDelay: "0.3s" }} />
-                </div>
-              </div>
-            </div>
+          {showScrollButton ? (
+            <button
+              type="button"
+              onClick={() => scrollToBottom("smooth")}
+              className="absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200/80 bg-white/90 text-slate-600 shadow-lg shadow-slate-200/80 transition-all duration-300 hover:scale-105 hover:border-emerald-300 hover:text-emerald-600 sm:bottom-6 sm:right-6"
+              aria-label="Scroll to latest messages"
+            >
+              <ChevronDown size={18} />
+            </button>
           ) : null}
 
-          <div ref={scrollRef} />
+          <div ref={scrollAnchorRef} />
         </div>
 
-        <div className="border-t border-gray-200 bg-white/90 p-3 backdrop-blur">
+        <div className="flex-shrink-0 border-t border-slate-200/70 bg-white/85 px-3 py-3 backdrop-blur-xl sm:px-4">
           {hasStarted ? <ChatInput onSendMessage={onSendMessage} disabled={isTyping} /> : null}
         </div>
       </div>
