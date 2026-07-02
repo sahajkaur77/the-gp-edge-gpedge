@@ -189,6 +189,24 @@
     text-wrap: balance;
   }
 
+  .chat-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(13, 148, 136, 0.35) transparent;
+  }
+
+  .chat-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .chat-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(13, 148, 136, 0.35), rgba(45, 212, 191, 0.35));
+    border-radius: 999px;
+  }
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
@@ -390,3 +408,37 @@
 .dark .shadow-lg   { box-shadow: 0 10px 30px rgba(0,0,0,0.30) !important; }
 .dark .shadow-xl   { box-shadow: 0 16px 40px rgba(0,0,0,0.32) !important; }
 .dark .shadow-2xl  { box-shadow: 0 24px 60px rgba(0,0,0,0.36) !important; }
+
+/* ── Chatbot UI Custom Styles ───────────────────────────────────────────── */
+.chat-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(13, 148, 136, 0.2);
+  border-radius: 99px;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 148, 136, 0.4);
+}
+.dark .chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(90, 200, 176, 0.2);
+}
+.dark .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(90, 200, 176, 0.4);
+}
+
+.glass-chat {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.dark .glass-chat {
+  background: rgba(27, 33, 44, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+

@@ -83,7 +83,7 @@ export default function VoiceRecorder({ onTranscript, disabled }: VoiceRecorderP
   return (
     <div className="flex items-center gap-2">
       {isRecording ? (
-        <span className="rounded-full bg-[#0d9488]/10 px-3 py-1.5 text-sm font-medium text-[#0d9488]">
+        <span className="rounded-full bg-emerald-50/90 px-3 py-1.5 text-sm font-medium text-emerald-700">
           {formatTime(elapsed)} • Listening...
         </span>
       ) : null}
@@ -95,7 +95,7 @@ export default function VoiceRecorder({ onTranscript, disabled }: VoiceRecorderP
         className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${
           isRecording
             ? "bg-red-500 text-white shadow-lg shadow-red-500/20 animate-pulse"
-            : "bg-[#0d9488] text-white shadow-lg shadow-[#0d9488]/20 hover:scale-105 hover:bg-[#0b7a6f] active:scale-95"
+            : "bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-lg shadow-emerald-500/20 hover:scale-105 hover:shadow-emerald-500/30 active:scale-95"
         }`}
       >
         {isRecording ? <Square size={16} /> : <Mic size={16} />}

@@ -63,7 +63,7 @@ export default function FileAttachment({ attachment, onAttachmentChange, disable
         title="Attach File"
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#0d9488] shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#0d9488] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white text-emerald-600 shadow-sm transition-all duration-300 hover:scale-105 hover:bg-emerald-50 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Paperclip size={16} />
       </button>
@@ -77,23 +77,23 @@ export default function FileAttachment({ attachment, onAttachmentChange, disable
       />
 
       {attachment ? (
-        <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 shadow-sm">
+        <div className="flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50/80 px-3 py-1.5 shadow-sm">
           {attachment.type.startsWith("image/") && previewUrl ? (
-            <div className="h-8 w-8 overflow-hidden rounded-full border border-gray-200 bg-gray-50">
+            <div className="h-8 w-8 overflow-hidden rounded-full border border-emerald-100 bg-white">
               <img src={previewUrl} alt={attachment.name} className="h-full w-full object-cover" />
             </div>
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0d9488]/10 text-[#0d9488]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-emerald-600">
               {attachment.type.includes("pdf") ? <FileText size={14} /> : <ImageIcon size={14} />}
             </div>
           )}
 
-          <span className="max-w-[120px] truncate text-sm text-gray-700">{attachment.name}</span>
+          <span className="max-w-[120px] truncate text-sm text-slate-700">{attachment.name}</span>
 
           <button
             type="button"
             onClick={handleRemove}
-            className="rounded-full p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-full p-1 text-slate-500 transition hover:bg-white hover:text-slate-700"
           >
             <X size={13} />
           </button>
