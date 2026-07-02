@@ -58,7 +58,7 @@ export default function ChatBot() {
     }
   };
 
-  const handleSendMessage = (text: string, skipIntro = false) => {
+  const handleSendMessage = async (text: string, skipIntro = false) => {
     const trimmed = text.trim();
     if (!trimmed) return;
 
@@ -76,27 +76,34 @@ export default function ChatBot() {
     setMessages((prev) => (prev.length === 0 ? [userMessage] : [...prev, userMessage]));
     setIsTyping(true);
 
-    window.setTimeout(() => {
-      const lowerText = trimmed.toLowerCase();
-      let response = DEFAULT_RESPONSE;
-
-      for (const item of BOT_RESPONSES) {
-        if (item.keywords.some((keyword) => lowerText.includes(keyword))) {
-          response = item.response;
-          break;
-        }
-      }
-
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmed }),
+      });
+      const data = await response.json();
+      
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: response,
+        text: data.reply || "Sorry, I couldn't get a response.",
         timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
       };
 
       setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: `bot-error-${Date.now()}`,
+        sender: "bot",
+        text: "Sorry, I couldn't get a response.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 900);
+    }
   };
 
   const handleClear = () => {
